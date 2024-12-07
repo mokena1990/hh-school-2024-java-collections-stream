@@ -2,7 +2,6 @@ package tasks;
 
 import common.Person;
 import common.PersonService;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,11 +25,9 @@ public class Task1 {
 
   public List<Person> findOrderedPersons(List<Integer> personIds) {
     Set<Person> personSet = personService.findPersons(personIds);
-    List<Person> personList = new ArrayList<>();
     Map<Integer, Person> personMap = personSet.stream().collect(Collectors.toMap(Person::id, Function.identity()));
-    for (int i = 0; i < personMap.size(); i++) {
-      personList.add(personMap.get(personIds.get(i)));
-    }
-    return personList;
+    return personIds.stream()
+        .map(personMap::get)
+        .toList();
   }
 }
