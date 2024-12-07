@@ -3,8 +3,8 @@ package tasks;
 import common.Person;
 import common.PersonService;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 /*
@@ -24,11 +24,8 @@ public class Task1 {
 
   public List<Person> findOrderedPersons(List<Integer> personIds) {
     Set<Person> persons = personService.findPersons(personIds);
-    List<Person> personList = new ArrayList<>();
-    for (int i = 0; i < persons.size(); i++) {
-      int finalI = i;
-      personList.add(persons.stream().filter(x -> Objects.equals(x.id(), personIds.get(finalI))).findFirst().orElseThrow());
-    }
+    List<Person> personList = new ArrayList<>(persons);
+    personList.sort(Comparator.comparingInt(p -> personIds.indexOf(p.id())));
     return personList;
   }
 }
