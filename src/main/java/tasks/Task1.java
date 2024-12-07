@@ -2,8 +2,9 @@ package tasks;
 
 import common.Person;
 import common.PersonService;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /*
@@ -23,6 +24,11 @@ public class Task1 {
 
   public List<Person> findOrderedPersons(List<Integer> personIds) {
     Set<Person> persons = personService.findPersons(personIds);
-    return Collections.emptyList();
+    List<Person> personList = new ArrayList<>();
+    for (int i = 0; i < persons.size(); i++) {
+      int finalI = i;
+      personList.add(persons.stream().filter(x -> Objects.equals(x.id(), personIds.get(finalI))).findFirst().orElseThrow());
+    }
+    return personList;
   }
 }
