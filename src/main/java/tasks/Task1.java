@@ -23,7 +23,7 @@ public class Task1 {
   public List<Person> findOrderedPersons(List<Integer> personIds) {
     return personService.findPersons(personIds)
         .stream()
-        .sorted(Comparator.comparingInt(p -> personIds.indexOf(p.id())))
+        .sorted(Comparator.comparing(p -> personIds.indexOf(p.id())))
         .toList();
   }
 }
