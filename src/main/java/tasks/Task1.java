@@ -3,8 +3,11 @@ package tasks;
 import common.Person;
 import common.PersonService;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /*
 Задача 1
@@ -22,8 +25,12 @@ public class Task1 {
   }
 
   public List<Person> findOrderedPersons(List<Integer> personIds) {
-    ArrayList<Person> list = new ArrayList<>(personService.findPersons(personIds));
-    list.sort(Comparator.comparing(p -> personIds.indexOf(p.id())));
-    return list;
+    Set<Person> personSet = personService.findPersons(personIds);
+    List<Person> personList = new ArrayList<>();
+    Map<Integer, Person> personMap = personSet.stream().collect(Collectors.toMap(Person::id, Function.identity()));
+    for (int i = 0; i < personMap.size(); i++) {
+      personList.add(personMap.get(personIds.get(i)));
+    }
+    return personList;
   }
 }
