@@ -2,10 +2,8 @@ package tasks;
 
 import common.Person;
 import common.PersonService;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 /*
 Задача 1
@@ -23,9 +21,9 @@ public class Task1 {
   }
 
   public List<Person> findOrderedPersons(List<Integer> personIds) {
-    Set<Person> persons = personService.findPersons(personIds);
-    List<Person> personList = new ArrayList<>(persons);
-    personList.sort(Comparator.comparingInt(p -> personIds.indexOf(p.id())));
-    return personList;
+    return personService.findPersons(personIds)
+        .stream()
+        .sorted(Comparator.comparingInt(p -> personIds.indexOf(p.id())))
+        .toList();
   }
 }
