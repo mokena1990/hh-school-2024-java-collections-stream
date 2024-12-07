@@ -2,6 +2,7 @@ package tasks;
 
 import common.Person;
 import common.PersonService;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -21,9 +22,8 @@ public class Task1 {
   }
 
   public List<Person> findOrderedPersons(List<Integer> personIds) {
-    return personService.findPersons(personIds)
-        .stream()
-        .sorted(Comparator.comparing(p -> personIds.indexOf(p.id())))
-        .toList();
+    ArrayList<Person> list = new ArrayList<>(personService.findPersons(personIds));
+    list.sort(Comparator.comparing(p -> personIds.indexOf(p.id())));
+    return list;
   }
 }
