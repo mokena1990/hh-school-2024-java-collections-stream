@@ -20,17 +20,17 @@ public class Task6 {
                                                   Map<Integer, Set<Integer>> personAreaIds,
                                                   Collection<Area> areas) {
     Set<String> result = new HashSet<>();
-    for (var entry : personAreaIds.entrySet()) {
+    for (int personId : personAreaIds.keySet()) {
       Person person = persons.stream()
-          .filter(p -> p.id().equals(entry.getKey()))
+          .filter(p -> p.id().equals(personId))
           .findFirst()
           .orElseThrow();
-      for (var area : entry.getValue()) {
+      for(int areaId : personAreaIds.get(personId)) {
         result.add(String.format(
             "%s - %s",
             person.firstName(),
             areas.stream()
-                .filter(ar -> ar.getId().equals(area))
+                .filter(ar -> ar.getId().equals(areaId))
                 .map(Area::getName)
                 .findFirst()
                 .orElseThrow()
