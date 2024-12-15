@@ -19,6 +19,24 @@ public class Task6 {
   public static Set<String> getPersonDescriptions(Collection<Person> persons,
                                                   Map<Integer, Set<Integer>> personAreaIds,
                                                   Collection<Area> areas) {
-    return new HashSet<>();
+    Set<String> result = new HashSet<>();
+    for (var entry : personAreaIds.entrySet()) {
+      Person person = persons.stream()
+          .filter(p -> p.id().equals(entry.getKey()))
+          .findFirst()
+          .orElseThrow();
+      for (var area : entry.getValue()) {
+        result.add(String.format(
+            "%s - %s",
+            person.firstName(),
+            areas.stream()
+                .filter(ar -> ar.getId().equals(area))
+                .map(Area::getName)
+                .findFirst()
+                .orElseThrow()
+        ));
+      }
+    }
+    return result;
   }
 }
