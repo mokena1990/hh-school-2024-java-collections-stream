@@ -13,15 +13,11 @@ import java.util.stream.Collectors;
 public class Task7 {
 
   public static Set<String> vacancyNames(Collection<Company> companies) {
-    Set<String> vacanciesNames = new HashSet<>();
-    for (var company : companies) {
-      vacanciesNames.addAll(
-          company.getVacancies()
-              .stream()
-              .map(Vacancy::getTitle)
-              .collect(Collectors.toSet())
-      );
-    }
+    Set<String> vacanciesNames = companies.stream()
+        .map(Company::getVacancies)
+        .flatMap(Set::stream)
+        .map(Vacancy::getTitle)
+        .collect(Collectors.toSet());
     return vacanciesNames;
   }
 }
