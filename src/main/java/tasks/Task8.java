@@ -5,7 +5,12 @@ import common.PersonService;
 import common.PersonWithResumes;
 import common.Resume;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /*
   Еще один вариант задачи обогащения
@@ -21,7 +26,13 @@ public class Task8 {
   }
 
   public Set<PersonWithResumes> enrichPersonsWithResumes(Collection<Person> persons) {
-    Set<Resume> resumes = personService.findResumes(Set.of());
-    return Set.of();
+//    Map<Integer, Person> personMap = new HashMap<>(persons.stream().collect(Collectors.toMap(Person::id, Function.identity(), (x, y) -> x)));
+//    Set<Resume> resumes = personService.findResumes(personMap.keySet());
+//
+
+    return persons.stream()
+        .map(p -> new PersonWithResumes(p, personService.findResumes(Collections.singleton(p.id()))))
+        .collect(Collectors.toSet());
+
   }
 }
