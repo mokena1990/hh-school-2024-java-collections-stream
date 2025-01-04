@@ -3,6 +3,7 @@ package tasks;
 import common.Person;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 /*
@@ -16,6 +17,12 @@ public class Task2 {
   public static List<Person> combineAndSortWithLimit(Collection<Person> persons1,
                                                      Collection<Person> persons2,
                                                      int limit) {
-    return new ArrayList<>();
+    Collection<Person> personsAll = new ArrayList<>();
+    personsAll.addAll(persons1);
+    personsAll.addAll(persons2);
+    return personsAll.stream()
+        .sorted(Comparator.comparing(Person::createdAt))
+        .limit(limit)
+        .toList();
   }
 }
