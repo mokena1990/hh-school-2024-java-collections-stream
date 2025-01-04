@@ -34,7 +34,13 @@ public class Task8 {
 
     return personMap.entrySet()
         .stream()
-        .map(entry -> new PersonWithResumes(entry.getValue(), personIdWithResume.get(entry.getKey())))
+        .map(entry -> {
+          Set<Resume> resumeSet = personIdWithResume.get(entry.getKey());
+          if (resumeSet == null) {
+            resumeSet = Set.of();
+          }
+          return new PersonWithResumes(entry.getValue(), resumeSet);
+        })
         .collect(Collectors.toSet());
   }
 }
