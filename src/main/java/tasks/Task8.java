@@ -37,7 +37,7 @@ public class Task8 {
         .map(entry -> {
           Set<Resume> resumeSet = personIdWithResume.get(entry.getKey());
           if (resumeSet == null) {
-            resumeSet = Set.of();
+            resumeSet = Set.of(); // если бы допускался null для персоны без резюме, вместо Set.of(), то всё было бы по красоте!!!
           }
           return new PersonWithResumes(entry.getValue(), resumeSet);
         })

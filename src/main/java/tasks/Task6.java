@@ -3,9 +3,11 @@ package tasks;
 import common.Area;
 import common.Person;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
 Имеются
@@ -20,23 +22,15 @@ public class Task6 {
                                                   Map<Integer, Set<Integer>> personAreaIds,
                                                   Collection<Area> areas) {
     Set<String> result = new HashSet<>();
-    for (int personId : personAreaIds.keySet()) {
-      Person person = persons.stream()
-          .filter(p -> p.id().equals(personId))
-          .findFirst()
-          .orElseThrow();
-      for(int areaId : personAreaIds.get(personId)) {
-        result.add(String.format(
-            "%s - %s",
-            person.firstName(),
-            areas.stream()
-                .filter(ar -> ar.getId().equals(areaId))
-                .map(Area::getName)
-                .findFirst()
-                .orElseThrow()
-        ));
-      }
-    }
+    Map<Integer, String> areaMap = new HashMap<>(areas.stream().collect(Collectors.toMap(Area::getId, Area::getName, (x, y) -> x)));
+    Map<Integer, String> personMap = new HashMap<>(persons.stream().collect(Collectors.toMap(Person::id, Person::firstName, (x, y) -> x)));
+    personAreaIds.forEach(
+        (k, v) -> result.addAll(
+            v.stream()
+                .map(areaId -> String.format("%s - %s", personMap.get(k), areaMap.get(areaId)))
+                .collect(Collectors.toSet())
+        )
+    );
     return result;
   }
 }
