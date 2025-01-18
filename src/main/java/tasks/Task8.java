@@ -5,7 +5,6 @@ import common.PersonService;
 import common.PersonWithResumes;
 import common.Resume;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -25,21 +24,16 @@ public class Task8 {
   }
 
   public Set<PersonWithResumes> enrichPersonsWithResumes(Collection<Person> persons) {
-    Map<Integer, Person> personMap = new HashMap<>(persons.stream().collect(Collectors.toMap(Person::id, Function.identity(), (x, y) -> x)));
-    Set<Resume> resumes = personService.findResumes(personMap.keySet());
+    Set<Resume> resumes = personService.findResumes(persons.stream().map(Person::id).collect(Collectors.toSet()));
     Map<Integer, Set<Resume>> personIdWithResume = resumes.stream()
         .collect(
             Collectors.groupingBy(Resume::personId, Collectors.mapping(Function.identity(), Collectors.toSet()))
         );
 
-    return personMap.entrySet()
-        .stream()
-        .map(entry -> {
-          Set<Resume> resumeSet = personIdWithResume.get(entry.getKey());
-          if (resumeSet == null) {
-            resumeSet = Set.of(); // если бы допускался null для персоны без резюме, вместо Set.of(), то всё было бы по красоте!!!
-          }
-          return new PersonWithResumes(entry.getValue(), resumeSet);
+    return persons.stream()
+        .map(person -> {
+          Set<Resume> resumeSet = personIdWithResume.getOrDefault(person.id(), Set.of());
+          return new PersonWithResumes(person, resumeSet);
         })
         .collect(Collectors.toSet());
   }

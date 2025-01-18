@@ -3,10 +3,10 @@ package tasks;
 import common.Area;
 import common.Person;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /*
@@ -22,15 +22,19 @@ public class Task6 {
                                                   Map<Integer, Set<Integer>> personAreaIds,
                                                   Collection<Area> areas) {
     Set<String> result = new HashSet<>();
-    Map<Integer, String> areaMap = new HashMap<>(areas.stream().collect(Collectors.toMap(Area::getId, Area::getName, (x, y) -> x)));
-    Map<Integer, String> personMap = new HashMap<>(persons.stream().collect(Collectors.toMap(Person::id, Person::firstName, (x, y) -> x)));
-    personAreaIds.forEach(
-        (k, v) -> result.addAll(
-            v.stream()
-                .map(areaId -> String.format("%s - %s", personMap.get(k), areaMap.get(areaId)))
-                .collect(Collectors.toSet())
-        )
-    );
+    Map<Integer, Area> areaMap = areas.stream().collect(Collectors.toMap(Area::getId, Function.identity(), (x, y) -> x));
+    persons.forEach(person -> {
+      Set<Integer> areasIds = personAreaIds.get(person.id());
+      result.addAll(
+          areasIds.stream()
+              .map(areaId -> concatPersonAndArea(person, areaMap.get(areaId)))
+              .collect(Collectors.toSet())
+      );
+    });
     return result;
+  }
+
+  private static String concatPersonAndArea(Person person, Area area) {
+    return String.format("%s - %s", person.firstName(), area.getName());
   }
 }

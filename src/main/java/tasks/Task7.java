@@ -3,7 +3,6 @@ package tasks;
 import common.Company;
 import common.Vacancy;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,11 +12,10 @@ import java.util.stream.Collectors;
 public class Task7 {
 
   public static Set<String> vacancyNames(Collection<Company> companies) {
-    Set<String> vacanciesNames = companies.stream()
+    return companies.stream()
         .map(Company::getVacancies)
         .flatMap(Set::stream)
         .map(Vacancy::getTitle)
         .collect(Collectors.toSet());
-    return vacanciesNames;
   }
 }

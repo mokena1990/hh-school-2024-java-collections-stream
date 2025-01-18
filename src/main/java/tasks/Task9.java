@@ -4,7 +4,6 @@ import common.Person;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,9 @@ public class Task9 {
 
   // Тут фронтовая логика, делаем за них работу - склеиваем ФИО
   public String convertPersonToString(Person person) {
-    return String.join(" ", person.secondName(), person.firstName(), person.middleName());
+    return Stream.of(person.secondName(), person.firstName(), person.middleName())
+        .filter(initial -> initial != null && !initial.isEmpty())
+        .collect(Collectors.joining(" "));
   }
 
   // словарь id персоны -> ее имя
@@ -62,7 +63,9 @@ public class Task9 {
     List<Integer> integers = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
     List<Integer> snapshot = new ArrayList<>(integers);
     Collections.shuffle(integers);
-    Set<Integer> set = new HashSet<>(integers);
-    assert snapshot.toString().equals(set.toString()); // потому что объект один и тот же, а все переменные ссылки на него?
+    Set<Integer> set = new HashSet<>(integers); // если в дебаге выполнить эту строку, то тут создается SET из упорядочных чисел и они как в изначальном листе integers
+    assert snapshot.toString().equals(set.toString()); // а тут у стринг хэш равен 0 и получается сравниваются только значения, а они одинаковые
+    // только я не понимаю, почему перевод в hashset меняет порядок, если этот сет не гарантирует сортировку элементов
+    // на джавараш есть вот такое The order in which elements are added is calculated using a hash code;, может потому сортируются элементы, но опять же, сет не гарантирует же сортировку
   }
 }
