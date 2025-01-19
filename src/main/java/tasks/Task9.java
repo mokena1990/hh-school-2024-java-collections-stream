@@ -4,7 +4,6 @@ import common.Person;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,69 +20,41 @@ P.P.S Здесь ваши правки необходимо прокоммент
  */
 public class Task9 {
 
-  private long count;
-
   // Костыль, эластик всегда выдает в топе "фальшивую персону".
   // Конвертируем начиная со второй
   public List<String> getNames(List<Person> persons) {
-    if (persons.size() == 0) {
-      return Collections.emptyList();
-    }
-    persons.remove(0);
-    return persons.stream().map(Person::firstName).collect(Collectors.toList());
+    return persons.stream()
+        .skip(1)
+        .map(Person::firstName)
+        .collect(Collectors.toList());
   }
 
   // Зачем-то нужны различные имена этих же персон (без учета фальшивой разумеется)
   public Set<String> getDifferentNames(List<Person> persons) {
-    return getNames(persons).stream().distinct().collect(Collectors.toSet());
+    return new HashSet<>(getNames(persons));
   }
 
   // Тут фронтовая логика, делаем за них работу - склеиваем ФИО
   public String convertPersonToString(Person person) {
-    String result = "";
-    if (person.secondName() != null) {
-      result += person.secondName();
-    }
-
-    if (person.firstName() != null) {
-      result += " " + person.firstName();
-    }
-
-    if (person.secondName() != null) {
-      result += " " + person.secondName();
-    }
-    return result;
+    return Stream.of(person.secondName(), person.firstName(), person.middleName())
+        .filter(initial -> initial != null && !initial.isEmpty())
+        .collect(Collectors.joining(" "));
   }
 
   // словарь id персоны -> ее имя
   public Map<Integer, String> getPersonNames(Collection<Person> persons) {
-    Map<Integer, String> map = new HashMap<>(1);
-    for (Person person : persons) {
-      if (!map.containsKey(person.id())) {
-        map.put(person.id(), convertPersonToString(person));
-      }
-    }
-    return map;
+    return persons.stream()
+        .collect(Collectors.toMap(Person::id, this::convertPersonToString));
   }
 
   // есть ли совпадающие в двух коллекциях персоны?
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-    boolean has = false;
-    for (Person person1 : persons1) {
-      for (Person person2 : persons2) {
-        if (person1.equals(person2)) {
-          has = true;
-        }
-      }
-    }
-    return has;
+    return persons1.stream().anyMatch(persons2::contains);
   }
 
   // Посчитать число четных чисел
   public long countEven(Stream<Integer> numbers) {
-    count = 0;
-    numbers.filter(num -> num % 2 == 0).forEach(num -> count++);
-    return count;
+    return numbers.filter(num -> num % 2 == 0).count();
   }
 
   // Загадка - объясните почему assert тут всегда верен
@@ -92,7 +63,9 @@ public class Task9 {
     List<Integer> integers = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
     List<Integer> snapshot = new ArrayList<>(integers);
     Collections.shuffle(integers);
-    Set<Integer> set = new HashSet<>(integers);
-    assert snapshot.toString().equals(set.toString());
+    Set<Integer> set = new HashSet<>(integers); // если в дебаге выполнить эту строку, то тут создается SET из упорядочных чисел и они как в изначальном листе integers
+    assert snapshot.toString().equals(set.toString()); // а тут у стринг хэш равен 0 и получается сравниваются только значения, а они одинаковые
+    // только я не понимаю, почему перевод в hashset меняет порядок, если этот сет не гарантирует сортировку элементов
+    // на джавараш есть вот такое The order in which elements are added is calculated using a hash code;, может потому сортируются элементы, но опять же, сет не гарантирует же сортировку
   }
 }
